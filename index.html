@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KK Youth Profiling System | Participation Tracking</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+:root { --line:var(--bs-border-color); --muted:var(--bs-secondary-color); }
+body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif; background:var(--bs-tertiary-bg); color:var(--bs-body-color); }
+.top-strip { height:7px; background:var(--bs-primary); }
+.header { height:70px; background:var(--bs-body-bg); border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; padding:0 30px; }
+.header-title { font-weight:700; font-size:20px; }
+.header small { color:var(--muted); font-size:14px; }
+.avatar { width:38px; height:38px; background:var(--bs-primary); color:#fff; border-radius:50%; display:flex; justify-content:center; align-items:center; font-weight:700; }
+.content { padding:30px; max-width:1480px; margin-inline:auto; }
+.card-box { background:var(--bs-body-bg); border:1px solid var(--line); border-radius:16px; margin-bottom:22px; overflow:hidden; box-shadow:0 1px 3px rgba(16,24,40,.06); }
+.card-head { padding:16px 20px; border-bottom:1px solid var(--line); font-weight:700; font-size:15px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; }
+.card-head i.t { color:var(--bs-primary); margin-right:8px; }
+.card-body2 { padding:20px; }
+.stat { background:var(--bs-body-bg); border:1px solid var(--line); border-radius:16px; padding:20px; height:100%; box-shadow:0 1px 3px rgba(16,24,40,.06); }
+.stat i { display:flex; width:44px; height:44px; background:var(--bs-primary-bg-subtle); color:var(--bs-primary); border-radius:12px; align-items:center; justify-content:center; font-size:21px; margin-bottom:12px; }
+.stat .number { font-size:32px; font-weight:800; line-height:1.1; letter-spacing:-.5px; font-variant-numeric:tabular-nums; }
+.stat .label { font-weight:600; font-size:14px; }
+.stat .sub { font-size:12px; color:var(--muted); margin-top:2px; min-height:16px; }
+.stat .progress { height:6px; margin-top:10px; }
+.filter-bar { display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end; padding:14px 18px; background:color-mix(in srgb, var(--bs-primary) 4%, var(--bs-body-bg)); }
+.filter-bar .form-label { font-size:12px; font-weight:600; color:var(--muted); margin-bottom:3px; }
+.filter-bar .grow { flex:1 1 200px; min-width:160px; } .filter-bar .fixed { flex:0 0 150px; }
+.filter-bar .form-select, .filter-bar .form-control, .filter-bar .btn { height:40px; }
+.form-control, .form-select, .btn { border-radius:10px; } .btn { font-weight:600; }
+.table { font-size:14px; margin-bottom:0; }
+.table th { background:var(--bs-tertiary-bg); color:var(--muted); text-transform:uppercase; letter-spacing:.04em; font-size:11.5px; font-weight:600; padding:13px; white-space:nowrap; }
+.table td { padding:13px; vertical-align:middle; border-color:var(--line); }
+.table tbody tr:hover td { background:var(--bs-tertiary-bg); }
+.table-responsive { border:1px solid var(--line); border-radius:12px; }
+.badge { border-radius:999px; font-weight:600; padding:.4em .75em; }
+.progress { background:var(--bs-secondary-bg); border-radius:999px; } .progress-bar { background:var(--bs-primary); border-radius:999px; }
+.pc-chips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+.pc-fchip { border:1px solid var(--line); background:var(--bs-body-bg); color:var(--bs-body-color); border-radius:999px; padding:6px 14px; font-size:13px; font-weight:600; }
+.pc-fchip b { margin-left:6px; opacity:.75; } .pc-fchip:hover { background:var(--bs-tertiary-bg); }
+.pc-fchip.active { background:var(--bs-primary); border-color:var(--bs-primary); color:#fff; }
+.pc-rate { display:flex; align-items:center; gap:10px; min-width:130px; } .pc-rate .progress { flex:1; height:6px; }
+.pc-rate span { font-size:13px; font-weight:600; width:38px; text-align:right; font-variant-numeric:tabular-nums; }
+.pc-matrix-wrap { overflow-x:auto; }
+.pc-matrix { border-collapse:separate; border-spacing:3px; width:100%; }
+.pc-matrix th { font-weight:600; font-size:12px; color:var(--muted); text-align:center; padding:2px 4px; vertical-align:bottom; }
+.pc-matrix th.rowh { text-align:left; color:var(--bs-body-color); font-size:13px; white-space:nowrap; padding-right:14px; }
+.pc-matrix th .ct { display:block; max-width:96px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin:0 auto; }
+.pc-matrix th small { display:block; font-weight:400; font-size:11px; }
+.pc-matrix td.m { height:38px; min-width:46px; border-radius:8px; text-align:center; font-size:12px; font-weight:600; background:var(--bs-secondary-bg); }
+.pc-matrix td.m[data-l="1"], .pc-key i[data-l="1"] { background:color-mix(in srgb, var(--bs-primary) 28%, var(--bs-body-bg)); }
+.pc-matrix td.m[data-l="2"], .pc-key i[data-l="2"] { background:color-mix(in srgb, var(--bs-primary) 50%, var(--bs-body-bg)); }
+.pc-matrix td.m[data-l="3"], .pc-key i[data-l="3"] { background:color-mix(in srgb, var(--bs-primary) 75%, var(--bs-body-bg)); color:#fff; }
+.pc-matrix td.m[data-l="4"], .pc-key i[data-l="4"] { background:var(--bs-primary); color:#fff; }
+.pc-matrix td.tot { text-align:right; font-weight:700; font-size:13px; padding-left:12px; }
+.pc-key { display:flex; align-items:center; gap:4px; justify-content:flex-end; font-size:12px; color:var(--muted); margin-top:10px; }
+.pc-key i { width:14px; height:14px; border-radius:3px; background:var(--bs-secondary-bg); display:inline-block; }
+.footer-note { text-align:center; color:var(--muted); font-size:13px; padding:25px; }
+:focus-visible { outline:2px solid var(--bs-primary); outline-offset:2px; }
+@media(max-width:991px){ .content{padding:18px;} .header{padding:0 16px;} }
+</style>
+</head>
+<body>
+<div class="top-strip"></div>
+<header class="header">
+  <div><div class="header-title">Participation Tracking</div><small>KK Youth Profiling System</small></div>
+  <div class="d-flex align-items-center gap-3"><i class="bi bi-bell fs-5"></i><div class="avatar">A</div></div>
+</header>
+
+<div class="content">
+  <div class="row g-3 mb-3">
+    <div class="col-6 col-lg-3"><div class="stat"><i class="bi bi-people"></i><div class="number" id="sActive">0</div><div class="label">Active KK members</div><div class="sub">&nbsp;</div></div></div>
+    <div class="col-6 col-lg-3"><div class="stat"><i class="bi bi-percent"></i><div class="number" id="sRate">0%</div><div class="label">Participation rate</div><div class="progress"><div class="progress-bar" id="sRateBar" style="width:0%"></div></div><div class="sub mt-2" id="sRateNote"></div></div></div>
+    <div class="col-6 col-lg-3"><div class="stat"><i class="bi bi-trophy"></i><div class="number" id="sAtt">0</div><div class="label">Total attendances</div><div class="sub">&nbsp;</div></div></div>
+    <div class="col-6 col-lg-3"><div class="stat"><i class="bi bi-calendar-event"></i><div class="number" id="sProg">0</div><div class="label">Activities with records</div><div class="sub">&nbsp;</div></div></div>
+  </div>
+
+  <div class="card-box">
+    <div class="filter-bar">
+      <div class="grow"><label class="form-label" for="fAct">Activity</label><select class="form-select" id="fAct"><option value="">All activities</option></select></div>
+      <div class="fixed"><label class="form-label" for="fFrom">From</label><input type="date" class="form-control" id="fFrom"></div>
+      <div class="fixed"><label class="form-label" for="fTo">To</label><input type="date" class="form-control" id="fTo"></div>
+      <button class="btn btn-outline-primary" type="button" id="fClear"><i class="bi bi-x-circle me-1"></i>Clear</button>
+      <button class="btn btn-primary ms-lg-auto" type="button"><i class="bi bi-clipboard-check me-2"></i>Record attendance</button>
+    </div>
+    <div id="fErr" class="small text-danger px-3 pb-2" role="alert"></div>
+  </div>
+
+  <div class="card-box">
+    <div class="card-head"><span><i class="bi bi-person-lines-fill t"></i>Member engagement</span>
+      <input type="search" class="form-control" id="eSearch" placeholder="Search name, ID or Purok" style="max-width:260px"></div>
+    <div class="card-body2">
+      <div class="pc-chips" id="eChips" role="group" aria-label="Filter members by engagement"></div>
+      <div class="table-responsive"><table class="table"><thead><tr><th>Member</th><th>Purok</th><th>Attended</th><th>Rate</th><th>Last attended</th><th>Status</th></tr></thead><tbody id="eBody"></tbody></table></div>
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3"><span class="small text-muted" id="eNote"></span><button type="button" class="btn btn-sm btn-outline-primary" id="eMore" hidden></button></div>
+      <p class="small text-muted mt-2 mb-0">Regular = attended 50% or more of the activities. Occasional = attended some. Not yet attended = none.</p>
+    </div>
+  </div>
+
+  <div class="card-box">
+    <div class="card-head"><span><i class="bi bi-grid-3x3-gap t"></i>Participation heatmap</span>
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        <div class="btn-group" role="group" aria-label="Rows">
+          <button type="button" class="btn btn-sm btn-outline-primary active" data-view="cop">Center of Participation</button>
+          <button type="button" class="btn btn-sm btn-outline-primary" data-view="age">Age group</button>
+          <button type="button" class="btn btn-sm btn-outline-primary" data-view="purok">Purok</button>
+        </div>
+        <div class="btn-group" role="group" aria-label="Columns">
+          <button type="button" class="btn btn-sm btn-outline-secondary active" data-col="month">By month</button>
+          <button type="button" class="btn btn-sm btn-outline-secondary" data-col="event">By activity</button>
+        </div>
+        <select class="form-select form-select-sm" id="fYear" style="width:auto" aria-label="Year"></select>
+      </div></div>
+    <div class="card-body2">
+      <div class="small text-muted mb-3" id="hSummary" aria-live="polite"></div>
+      <div class="pc-matrix-wrap"><div id="hMatrix"></div></div>
+      <div class="pc-key"><span>Less</span><i></i><i data-l="1"></i><i data-l="2"></i><i data-l="3"></i><i data-l="4"></i><span>More</span></div>
+    </div>
+  </div>
+
+  <div class="card-box">
+    <div class="card-head"><span><i class="bi bi-person-check t"></i>Youth Participation Records</span></div>
+    <div class="card-body2">
+      <div class="row g-2 mb-3">
+        <div class="col-md-5"><input type="text" id="search" class="form-control" placeholder="Search member, age, Purok or event..."></div>
+        <div class="col-md-4"><select class="form-select" id="fStatus" aria-label="Attendance status"><option value="">All attendance statuses</option><option>Attended</option><option>Did not attend</option><option>Not recorded</option></select></div>
+        <div class="col-md-3 d-flex align-items-center justify-content-between gap-2"><span class="small text-muted" id="rCount"></span><button class="btn btn-sm btn-outline-primary text-nowrap" type="button" id="exportCsv"><i class="bi bi-download me-1"></i>Export CSV</button></div>
+      </div>
+      <div class="table-responsive"><table class="table"><thead><tr><th>Member ID</th><th>Full Name</th><th>Program / Event</th><th>Registration</th><th>Age</th><th>Purok</th><th>Attendance</th><th>Member Status</th></tr></thead>
+        <tbody id="rBody"></tbody></table></div>
+      <p class="small text-muted mt-3 mb-0">Counts attended records only. Walk-ins are included and nobody is counted twice for the same activity.</p>
+    </div>
+  </div>
+
+  <div class="footer-note">KK Youth Profiling System • SK Barangay Sikat, Alfonso, Cavite • FY 2026–2027</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+/* Dark mode follows the device setting */
+document.documentElement.setAttribute('data-bs-theme', matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+/* ---------- SAMPLE DATA (palitan ng totoong data / replace with real data) ---------- */
+const copCategories = ['Health','Education','Economic Empowerment','Social Inclusion and Equity','Peace-Building and Security','Governance','Active Citizenship','Environment','Global Mobility','Agriculture'];
+const ageGroups = ['15-17','18-20','21-24','25-30','Outside ages 15-30','Unknown'];
+const defaultYear = String(new Date().getFullYear());
+const puroks = ['Purok 1','Purok 2','Purok 3','Purok 4','Purok 5'];
+const names = ['Juan Dela Cruz','Maria Santos','Jose Reyes','Ana Garcia','Mark Bautista','Liza Mendoza','Paolo Ramos','Kyla Navarro','Carlo Aquino','Bea Villanueva','Rico Castillo','Jenny Flores','Ethan Cruz','Nina Soriano','Migs Pascual','Trisha Lopez','Dan Torres','Cathy Rivera','Lance Domingo','Pia Manalo'];
+const ageOf = i => 15 + (i * 7) % 16;
+const groupOf = a => a <= 17 ? '15-17' : a <= 20 ? '18-20' : a <= 24 ? '21-24' : '25-30';
+const roster = names.map((n, i) => ({ id:'m' + i, memberNo:'KK-' + String(1001 + i), name:n, purok:puroks[i % 5], age:ageOf(i) }));
+const y = Number(defaultYear);
+const events = [
+  ['Barangay Clean-up Drive', y+'-01-18', ['Environment']], ['Youth Health Seminar', y+'-02-22', ['Health']],
+  ['Livelihood Workshop', y+'-03-15', ['Economic Empowerment']], ['SK General Assembly', y+'-04-12', ['Governance','Active Citizenship']],
+  ['Sports Fest', y+'-05-10', ['Active Citizenship']], ['Tutorial Program', y+'-06-14', ['Education']],
+  ['Peace & Safety Forum', y+'-07-19', ['Peace-Building and Security']], ['Tree Planting', y+'-08-23', ['Environment','Agriculture']],
+  ['Career Guidance Day', y+'-09-20', ['Education','Global Mobility']]
+].map((e, i) => ({ id:'e' + i, title:e[0], date:e[1], centers:e[2] }));
+const copRows = [], records = [];
+events.forEach((ev, ei) => roster.forEach((m, mi) => {
+  const r = (mi * 31 + ei * 17 + mi * ei) % 10;
+  const status = r < 5 ? 'Attended' : r < 7 ? 'Did not attend' : r < 8 ? 'Not recorded' : null;
+  if (!status) return;
+  const base = { eventTitle:ev.title, eventId:ev.id, eventDate:ev.date, attendanceStatus:status, ageGroup:groupOf(m.age), purok:m.purok };
+  copRows.push({ ...base, memberId:m.id, centers:ev.centers });
+  records.push({ ...base, memberNo:m.memberNo, memberName:m.name, submittedAt:ev.date.slice(0,8) + '01', age:m.age, memberStatus:'Active' });
+}));
+const activeMembers = roster.length;
+
+/* ---------- Helpers ---------- */
+const $ = id => document.getElementById(id);
+const esc = v => String(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const validDate = v => /^\d{4}-\d{2}-\d{2}$/.test(v || '') && !isNaN(new Date(v));
+const fmtDate = iso => validDate(iso) ? months[+iso.slice(5,7)-1] + ' ' + +iso.slice(8,10) + ', ' + iso.slice(0,4) : '—';
+let view = 'cop', colMode = 'month', eFilter = 'all', eAll = false;
+const E_LIMIT = 8, E_LABELS = { all:'All', regular:'Regular', occasional:'Occasional', none:'Not yet attended' };
+
+function filtered(list) {
+  const from = $('fFrom').value, to = $('fTo').value, ev = $('fAct').value;
+  if (from && to && from > to) { $('fErr').textContent = 'The start date must be on or before the end date.'; return []; }
+  $('fErr').textContent = '';
+  return list.filter(r => (!ev || r.eventId === ev) && (!(from || to) || (validDate(r.eventDate) && (!from || r.eventDate >= from) && (!to || r.eventDate <= to))));
+}
+
+/* ---------- Heatmap ---------- */
+function renderMatrix(rows) {
+  const year = Number($('fYear').value);
+  const att = rows.filter(r => r.attendanceStatus === 'Attended' && validDate(r.eventDate) && +r.eventDate.slice(0,4) === year);
+  let cols = [];
+  if (colMode === 'month') cols = months.map((m, i) => ({ key:String(i), title:m, sub:'' }));
+  else {
+    const seen = new Map();
+    att.forEach(r => { if (!seen.has(r.eventId)) seen.set(r.eventId, { key:r.eventId, title:r.eventTitle, date:r.eventDate }); });
+    cols = [...seen.values()].sort((a,b) => a.date < b.date ? -1 : 1).map(c => ({ key:c.key, title:c.title, sub:fmtDate(c.date).replace(/, \d{4}$/, '') }));
+  }
+  const colKey = r => colMode === 'month' ? String(+r.eventDate.slice(5,7) - 1) : r.eventId;
+  const groups = r => view === 'cop' ? r.centers : view === 'age' ? [r.ageGroup] : [r.purok];
+  const data = new Map();
+  const ensure = k => { if (!data.has(k)) data.set(k, { label:k, cells:new Map(), total:0 }); };
+  if (view === 'cop') copCategories.forEach(ensure);
+  if (view === 'age') ageGroups.slice(0,4).forEach(ensure);
+  att.forEach(r => groups(r).forEach(g => { ensure(g); const d = data.get(g), k = colKey(r); d.cells.set(k, (d.cells.get(k) || 0) + 1); d.total++; }));
+  let list = [...data.values()];
+  if (view !== 'age') list.sort((a,b) => b.total - a.total || a.label.localeCompare(b.label, undefined, { numeric:true }));
+  let max = 0; list.forEach(r => r.cells.forEach(v => max = Math.max(max, v)));
+  const total = list.reduce((n, r) => n + r.total, 0);
+  const grouping = { cop:'Center of Participation', age:'age group', purok:'Purok' }[view];
+  $('hSummary').textContent = total ? 'Attendance records in ' + year + ' by ' + grouping + ' and ' + (colMode === 'month' ? 'month' : 'activity') + '. Darker means more attendance.' : 'No attendance recorded in ' + year + ' with the current filters.';
+  if (!cols.length) { $('hMatrix').innerHTML = '<div class="text-muted py-3">No activities with attendance in ' + year + '.</div>'; return; }
+  let h = '<table class="pc-matrix"><thead><tr><th></th>' + cols.map(c => '<th scope="col"><span class="ct" title="' + esc(c.title) + '">' + esc(c.title) + '</span>' + (c.sub ? '<small>' + esc(c.sub) + '</small>' : '') + '</th>').join('') + '<th scope="col" style="text-align:right">Total</th></tr></thead><tbody>';
+  list.forEach(r => {
+    h += '<tr><th scope="row" class="rowh">' + esc(r.label) + '</th>';
+    cols.forEach(c => { const n = r.cells.get(c.key) || 0, l = n ? Math.max(1, Math.ceil(n / max * 4)) : 0;
+      h += '<td class="m"' + (l ? ' data-l="' + l + '"' : '') + ' title="' + esc(r.label + ' · ' + c.title + ': ' + n) + '">' + (n || '') + '</td>'; });
+    h += '<td class="tot">' + r.total + '</td></tr>';
+  });
+  $('hMatrix').innerHTML = h + '</tbody></table>';
+}
+
+/* ---------- Engagement ---------- */
+function renderEngagement(rows) {
+  const att = rows.filter(r => r.attendanceStatus === 'Attended');
+  const held = new Set(rows.map(r => r.eventId)).size;
+  const per = new Map();
+  att.forEach(r => { let e = per.get(r.memberId); if (!e) per.set(r.memberId, e = { ev:new Set(), last:'' }); e.ev.add(r.eventId); if (r.eventDate > e.last) e.last = r.eventDate; });
+  const list = roster.map(m => { const e = per.get(m.id), n = e ? e.ev.size : 0, rate = held ? Math.min(100, Math.round(n / held * 100)) : 0;
+    return { ...m, n, rate, last:e ? e.last : '', status:n === 0 ? 'none' : rate >= 50 ? 'regular' : 'occasional' }; });
+  const counts = { all:list.length, regular:0, occasional:0, none:0 }; list.forEach(m => counts[m.status]++);
+  $('eChips').innerHTML = Object.keys(E_LABELS).map(k => '<button type="button" class="pc-fchip' + (eFilter === k ? ' active' : '') + '" data-f="' + k + '" aria-pressed="' + (eFilter === k) + '">' + E_LABELS[k] + '<b>' + counts[k] + '</b></button>').join('');
+  const q = $('eSearch').value.trim().toLowerCase();
+  let shown = list.filter(m => (eFilter === 'all' || m.status === eFilter) && (!q || (m.name + ' ' + m.memberNo + ' ' + m.purok).toLowerCase().includes(q)));
+  shown.sort((a,b) => eFilter === 'none' ? a.name.localeCompare(b.name) : b.rate - a.rate || b.n - a.n || a.name.localeCompare(b.name));
+  const total = shown.length; if (!eAll) shown = shown.slice(0, E_LIMIT);
+  const badge = { regular:'<span class="badge bg-success-subtle text-success-emphasis">Regular</span>', occasional:'<span class="badge bg-warning-subtle text-warning-emphasis">Occasional</span>', none:'<span class="badge bg-danger-subtle text-danger-emphasis">Not yet attended</span>' };
+  $('eBody').innerHTML = shown.length ? shown.map(m => '<tr><td><strong>' + esc(m.name) + '</strong><div class="small text-muted">' + esc(m.memberNo) + '</div></td><td>' + esc(m.purok) + '</td><td>' + m.n + ' of ' + held + '</td><td><div class="pc-rate"><div class="progress"><div class="progress-bar" style="width:' + m.rate + '%"></div></div><span>' + m.rate + '%</span></div></td><td>' + fmtDate(m.last) + '</td><td>' + badge[m.status] + '</td></tr>').join('')
+    : '<tr><td colspan="6" class="text-center text-muted py-4">No members match this view.</td></tr>';
+  $('eNote').textContent = total ? 'Showing ' + shown.length + ' of ' + total + ' members' : '';
+  $('eMore').hidden = total <= E_LIMIT; $('eMore').textContent = eAll ? 'Show fewer' : 'Show all ' + total;
+}
+
+/* ---------- Records table + stats ---------- */
+function renderRecords() {
+  const q = $('search').value.trim().toLowerCase(), st = $('fStatus').value;
+  const base = filtered(records);
+  const rows = base.filter(r => (!st || r.attendanceStatus === st) && (!q || [r.memberNo, r.memberName, r.eventTitle, r.eventDate, r.age, r.purok, r.attendanceStatus].join(' ').toLowerCase().includes(q)))
+    .sort((a,b) => b.eventDate.localeCompare(a.eventDate) || a.eventTitle.localeCompare(b.eventTitle) || a.memberName.localeCompare(b.memberName));
+  const cls = { 'Attended':'bg-success-subtle text-success-emphasis', 'Did not attend':'bg-secondary-subtle text-secondary-emphasis', 'Not recorded':'bg-warning-subtle text-warning-emphasis' };
+  $('rBody').innerHTML = rows.length ? rows.map(r => '<tr><td>' + esc(r.memberNo) + '</td><td><strong>' + esc(r.memberName) + '</strong></td><td>' + esc(r.eventTitle) + '<div class="small text-muted">' + esc(r.eventDate) + '</div></td><td>' + esc(r.submittedAt) + '</td><td>' + r.age + '</td><td>' + esc(r.purok) + '</td><td><span class="badge ' + cls[r.attendanceStatus] + '">' + esc(r.attendanceStatus) + '</span></td><td>' + esc(r.memberStatus) + '</td></tr>').join('')
+    : '<tr><td colspan="8" class="text-center text-muted py-4">No participation records match these filters.</td></tr>';
+  $('rCount').textContent = rows.length + ' of ' + base.length + ' shown';
+}
+
+function render() {
+  const rows = filtered(copRows);
+  const att = rows.filter(r => r.attendanceStatus === 'Attended');
+  const linked = new Set(att.map(r => r.memberId));
+  const rate = activeMembers ? Math.min(100, Math.round(linked.size / activeMembers * 100)) : 0;
+  $('sActive').textContent = activeMembers;
+  $('sRate').textContent = rate + '%'; $('sRateBar').style.width = rate + '%';
+  $('sRateNote').textContent = linked.size + ' of ' + activeMembers + ' members attended';
+  $('sAtt').textContent = att.length;
+  $('sProg').textContent = new Set(rows.map(r => r.eventId)).size;
+  renderMatrix(rows); renderEngagement(rows); renderRecords();
+}
+
+/* ---------- CSV ---------- */
+const csvCell = v => '"' + String(v).replace(/\s+/g, ' ').trim().replace(/"/g, '""') + '"';
+$('exportCsv').addEventListener('click', () => {
+  const heads = [...document.querySelectorAll('#rBody')[0].closest('table').querySelectorAll('thead th')];
+  const lines = [heads.map(th => csvCell(th.textContent)).join(',')];
+  document.querySelectorAll('#rBody tr').forEach(tr => { if (tr.children.length === heads.length) lines.push([...tr.children].map(td => csvCell(td.textContent)).join(',')); });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['\ufeff' + lines.join('\r\n')], { type:'text/csv;charset=utf-8' }));
+  a.download = 'participation-records-' + new Date().toISOString().slice(0,10) + '.csv';
+  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
+});
+
+/* ---------- Init + events ---------- */
+const seen = new Map(); events.forEach(e => seen.set(e.id, e.title));
+$('fAct').innerHTML += [...seen].map(([id, t]) => '<option value="' + id + '">' + esc(t) + '</option>').join('');
+const years = new Set([defaultYear]); copRows.forEach(r => years.add(r.eventDate.slice(0,4)));
+$('fYear').innerHTML = [...years].sort((a,b) => b - a).map(v => '<option>' + v + '</option>').join(''); $('fYear').value = defaultYear;
+
+['fAct','fFrom','fTo','search','fStatus','fYear'].forEach(id => { $(id).addEventListener('input', render); $(id).addEventListener('change', render); });
+document.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => { view = b.dataset.view; document.querySelectorAll('[data-view]').forEach(x => x.classList.toggle('active', x === b)); render(); }));
+document.querySelectorAll('[data-col]').forEach(b => b.addEventListener('click', () => { colMode = b.dataset.col; document.querySelectorAll('[data-col]').forEach(x => x.classList.toggle('active', x === b)); render(); }));
+$('fClear').addEventListener('click', () => { ['fAct','fFrom','fTo','search','fStatus'].forEach(id => $(id).value = ''); $('fYear').value = defaultYear; render(); });
+$('eChips').addEventListener('click', e => { const c = e.target.closest('.pc-fchip'); if (!c) return; eFilter = c.dataset.f; eAll = false; render(); });
+$('eSearch').addEventListener('input', () => { eAll = false; render(); });
+$('eMore').addEventListener('click', () => { eAll = !eAll; render(); });
+render();
+</script>
+</body>
+</html>
